@@ -27,12 +27,14 @@ In-situ transmission electron microscopy (TEM) records how nanoparticles nucleat
   - Per-particle area, equivalent diameter (nm), circularity and eccentricity, plus per-frame statistics.
   - Kinetic fit of `R(t)^n − R0^n = k·t`, with a free exponent `n` and with the LSW reference `n = 3`.
 - **Publication-style figure** (`src/visualizer.py`): a 2 × 2 summary panel at 300 dpi using a colour-blind-safe palette and built-in scale bars.
+- **Interactive web demo** (`app.py`): a Streamlit workstation for live re-simulation, TIFF upload and result export (see [Interactive Web Demo](#interactive-web-demo)).
 
 ## Repository layout
 
 ```
 insitu-tem-dynamics-quant/
 ├── main.py                      # one-command pipeline entry point (CLI)
+├── app.py                       # interactive Streamlit analysis workstation
 ├── requirements.txt             # minimal dependencies
 ├── src/
 │   ├── __init__.py
@@ -82,6 +84,23 @@ Running the pipeline regenerates `data/synthetic_insitu_stack.tif`, `data/ground
 | `--skip-simulation` | off | Analyse the existing TIFF in `data/` instead of simulating |
 
 To analyse your own experimental series, save it as a `(T, Y, X)` multi-frame TIFF at `data/synthetic_insitu_stack.tif` (or adapt the path in `main.py`). Then run `python main.py --skip-simulation --pixel-size <nm/px> --frame-interval <s>`. Without a ground-truth CSV, the comparison overlays are omitted.
+
+## Interactive Web Demo
+
+`app.py` provides a lightweight analysis workstation built on [Streamlit](https://streamlit.io). It runs the same registration, segmentation and kinetics pipeline as `main.py`, entirely in the browser.
+
+```bash
+streamlit run app.py
+```
+
+The app opens at http://localhost:8501. Two run modes are available from the sidebar:
+
+| Mode | Description |
+| --- | --- |
+| **A · Demo dataset** (default) | Analyses the bundled `data/synthetic_insitu_stack.tif` against its ground truth. |
+| **B · Custom simulation / upload** | Re-simulates a series on the fly from interactive controls: electron dose (noise level), coarsening rate, frame count, particle count, image size, pixel size and seed. Alternatively, analyses an uploaded multi-frame `(T, Y, X)` TIFF. |
+
+The main panel shows four headline metrics: cumulative drift, registration RMSE, last-frame particle count, and coarsening exponent `n` with `R²`. Below them are the 2 × 2 summary figure and one-click downloads for the PNG, CSV and JSON results, also available as a single ZIP archive. All outputs are generated in memory, so the files in `data/` and `results/` are never overwritten. Uploaded experimental data have no ground truth, so the RMSE metric is shown as "—".
 
 ## Conventions and notes
 
