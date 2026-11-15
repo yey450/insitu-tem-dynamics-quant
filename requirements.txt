@@ -1,0 +1,7 @@
+numpy>=1.23
+scipy>=1.9
+scikit-image>=0.20
+opencv-python-headless>=4.7
+matplotlib>=3.7
+tifffile>=2023.2.3
+pandas>=1.5
